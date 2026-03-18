@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { removeToken } from "@/lib/api";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ const Navbar = () => {
               My results
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => {
-              localStorage.clear();
+              removeToken();
               navigate("/");
             }}>
               <LogOut className="mr-2 h-4 w-4" />
