@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { setToken } from "@/lib/api";
 
 const LoginPage = () => {
   const navigate = useNavigate();
