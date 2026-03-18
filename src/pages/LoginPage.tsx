@@ -33,7 +33,7 @@ const LoginPage = () => {
     setLoading(true);
     // Mock API call
     setTimeout(() => {
-      localStorage.setItem("session_id", "mock-session-" + Date.now());
+      setToken("mock-access-token-" + Date.now());
       setLoading(false);
       navigate("/upload");
     }, 1000);
