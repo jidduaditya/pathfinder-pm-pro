@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { removeToken } from "@/lib/api";
 
 const Navbar = () => {
   const navigate = useNavigate();
