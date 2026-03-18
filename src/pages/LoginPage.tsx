@@ -41,7 +41,7 @@ const LoginPage = () => {
 
   const handleGoogleLogin = () => {
     // Mock Google OAuth
-    localStorage.setItem("session_id", "mock-session-" + Date.now());
+    setToken("mock-access-token-" + Date.now());
     navigate("/upload");
   };
 
