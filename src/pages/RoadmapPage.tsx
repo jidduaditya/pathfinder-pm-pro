@@ -29,7 +29,7 @@ const mockRoadmap = {
       stage_number: 1,
       name: "Build your metrics foundation",
       duration: "2–3 weeks",
-      status: "not_started" as const,
+      status: "not_started" as StageStatus,
       goal: "Learn to define, measure, and communicate the right product metrics for data products.",
       resources: [
         { title: "Lean Analytics", type: "Book", url: "#" },
