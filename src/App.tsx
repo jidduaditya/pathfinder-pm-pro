@@ -9,6 +9,12 @@ import UploadPage from "@/pages/UploadPage";
 import QuestionnairePage from "@/pages/QuestionnairePage";
 import ProcessingPage from "@/pages/ProcessingPage";
 import ResultsPage from "@/pages/ResultsPage";
+import RoadmapStartPage from "@/pages/RoadmapStartPage";
+import QuizPage from "@/pages/QuizPage";
+import DiagnosisPage from "@/pages/DiagnosisPage";
+import RoadmapPage from "@/pages/RoadmapPage";
+import CoachHomePage from "@/pages/CoachHomePage";
+import CoachSessionPage from "@/pages/CoachSessionPage";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
