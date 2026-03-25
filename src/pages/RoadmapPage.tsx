@@ -44,7 +44,7 @@ const mockRoadmap = {
       stage_number: 2,
       name: "Master experimentation",
       duration: "2–3 weeks",
-      status: "not_started" as const,
+      status: "not_started" as StageStatus,
       goal: "Understand how to design, run, and interpret A/B tests for data-heavy products.",
       resources: [
         { title: "Trustworthy Online Controlled Experiments", type: "Book", url: "#" },
