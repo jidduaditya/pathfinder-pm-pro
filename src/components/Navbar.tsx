@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { User, LogOut, FileText, Map, MessageSquare } from "lucide-react";
-import NavLink from "@/components/NavLink";
+import { NavLink } from "@/components/NavLink";
 import {
   DropdownMenu,
   DropdownMenuContent,
