@@ -20,12 +20,28 @@ const Navbar = () => {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-navy">
       <div className="container flex h-14 items-center justify-between">
-        <button
-          onClick={() => navigate("/")}
-          className="text-lg font-semibold tracking-tight text-navy-foreground"
-        >
-          PM-GPS
-        </button>
+        <div className="flex items-center gap-5">
+          <button
+            onClick={() => navigate("/")}
+            className="text-lg font-semibold tracking-tight text-navy-foreground"
+          >
+            PM-GPS
+          </button>
+          {localStorage.getItem("pmgps_roadmap_id") && (
+            <button
+              onClick={() => navigate(`/roadmap/${localStorage.getItem("pmgps_roadmap_id")}`)}
+              className="flex items-center gap-1 text-sm text-navy-foreground/70 hover:text-navy-foreground transition-colors"
+            >
+              <Map className="h-3.5 w-3.5" /> My Roadmap
+            </button>
+          )}
+          <button
+            onClick={() => navigate("/coach")}
+            className="flex items-center gap-1 text-sm text-navy-foreground/70 hover:text-navy-foreground transition-colors"
+          >
+            <MessageSquare className="h-3.5 w-3.5" /> Coach
+          </button>
+        </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

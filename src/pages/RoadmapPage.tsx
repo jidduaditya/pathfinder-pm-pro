@@ -58,7 +58,7 @@ const mockRoadmap = {
       stage_number: 3,
       name: "Learn data governance basics",
       duration: "1–2 weeks",
-      status: "not_started" as const,
+      status: "not_started" as StageStatus,
       goal: "Understand data privacy, access controls, and compliance as a product manager.",
       resources: [
         { title: "GDPR for Product Managers", type: "Article", url: "#" },
