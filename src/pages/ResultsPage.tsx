@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, RotateCcw, ExternalLink } from "lucide-react";
+import { Download, RotateCcw, ExternalLink, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 // Mock data
 const mockResults = {
@@ -55,6 +56,17 @@ const ScoreCard = ({ card, selected, onClick }: { card: RoleCard; selected: bool
     <p className="text-sm font-semibold text-card-foreground">{card.role}</p>
     <p className="mt-1 text-2xl font-bold text-primary">{card.score}%</p>
     <p className="mt-1 text-xs text-muted-foreground">{card.rationale}</p>
+    <Button
+      variant="outline"
+      size="sm"
+      className="mt-3 w-full border-primary/40 text-primary hover:bg-primary/5"
+      onClick={(e) => { e.stopPropagation(); }}
+      asChild
+    >
+      <Link to={`/roadmap/start?role_id=${card.id}`}>
+        Build My Roadmap <ArrowRight className="ml-1 h-3.5 w-3.5" />
+      </Link>
+    </Button>
   </button>
 );
 
@@ -85,6 +97,10 @@ const ResultsPage = () => {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-bold text-foreground">Your results</h1>
+          <Link to="/coach" className="text-sm text-primary hover:underline">Go to Thinking Coach</Link>
+        </div>
+        <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div />
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={() => window.print()}>
               <Download className="mr-1.5 h-3.5 w-3.5" /> Download results
