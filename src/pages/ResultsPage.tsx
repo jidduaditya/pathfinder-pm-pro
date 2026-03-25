@@ -56,6 +56,17 @@ const ScoreCard = ({ card, selected, onClick }: { card: RoleCard; selected: bool
     <p className="text-sm font-semibold text-card-foreground">{card.role}</p>
     <p className="mt-1 text-2xl font-bold text-primary">{card.score}%</p>
     <p className="mt-1 text-xs text-muted-foreground">{card.rationale}</p>
+    <Button
+      variant="outline"
+      size="sm"
+      className="mt-3 w-full border-primary/40 text-primary hover:bg-primary/5"
+      onClick={(e) => { e.stopPropagation(); }}
+      asChild
+    >
+      <Link to={`/roadmap/start?role_id=${card.id}`}>
+        Build My Roadmap <ArrowRight className="ml-1 h-3.5 w-3.5" />
+      </Link>
+    </Button>
   </button>
 );
 
