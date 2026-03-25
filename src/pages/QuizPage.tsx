@@ -2,28 +2,25 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Textarea } from "@/components/ui/textarea";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Check } from "lucide-react";
 import { apiFetch } from "@/lib/api";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
-// Mock questions for frontend demo
 const mockQuestions = [
-  { id: "q1", type: "multiple_choice", text: "What is the primary goal of a product roadmap?", options: ["List all features to build", "Communicate strategic direction and priorities", "Track engineering velocity", "Assign tasks to team members"] },
-  { id: "q2", type: "scenario", text: "Your CEO wants to launch a feature next week that you believe needs more user research. How would you handle this situation?" },
-  { id: "q3", type: "multiple_choice", text: "Which metric best measures product-market fit for a B2B SaaS product?", options: ["Monthly Active Users", "Net Revenue Retention", "Page views", "Number of features shipped"] },
-  { id: "q4", type: "open_text", text: "Describe how you would prioritise features when you have limited engineering resources and multiple stakeholder requests." },
-  { id: "q5", type: "multiple_choice", text: "What is a common anti-pattern when writing user stories?", options: ["Including acceptance criteria", "Writing from the user's perspective", "Describing implementation details instead of outcomes", "Keeping stories small and testable"] },
-  { id: "q6", type: "scenario", text: "You discover that a recently launched feature has a 2% adoption rate after one month. Walk me through how you'd diagnose and address this." },
-  { id: "q7", type: "multiple_choice", text: "When conducting A/B tests, what determines the minimum sample size?", options: ["Number of engineers available", "Minimum detectable effect and statistical significance level", "How long the CEO is willing to wait", "The number of features being tested"] },
-  { id: "q8", type: "open_text", text: "How would you define and measure success for a new onboarding flow?" },
-  { id: "q9", type: "multiple_choice", text: "What is the main benefit of using a jobs-to-be-done framework?", options: ["It replaces the need for user interviews", "It focuses on the underlying need rather than the solution", "It simplifies engineering estimates", "It eliminates the need for competitive analysis"] },
-  { id: "q10", type: "scenario", text: "Your data team tells you the key metric you've been optimising is actually a vanity metric. How do you respond and what steps do you take?" },
+  { id: "q1", text: "What is the primary goal of a product roadmap?", options: ["List all features to build", "Communicate strategic direction and priorities", "Track engineering velocity", "Assign tasks to team members"] },
+  { id: "q2", text: "Your CEO wants to launch a feature next week that you believe needs more user research. What is your best first step?", options: ["Agree and start building immediately", "Refuse and escalate to the board", "Present data on user research gaps and propose a compromise timeline", "Delegate the decision to your engineering lead"] },
+  { id: "q3", text: "Which metric best measures product-market fit for a B2B SaaS product?", options: ["Monthly Active Users", "Net Revenue Retention", "Page views", "Number of features shipped"] },
+  { id: "q4", text: "When prioritising features with limited engineering resources, which approach is most effective?", options: ["Build whatever the loudest stakeholder requests", "Use an impact vs effort framework to rank opportunities", "Ship the easiest features first to show progress", "Wait until more resources are available"] },
+  { id: "q5", text: "What is a common anti-pattern when writing user stories?", options: ["Including acceptance criteria", "Writing from the user's perspective", "Describing implementation details instead of outcomes", "Keeping stories small and testable"] },
+  { id: "q6", text: "A recently launched feature has a 2% adoption rate after one month. What should you do first?", options: ["Remove the feature immediately", "Analyse user behaviour data to understand why adoption is low", "Double the marketing budget for the feature", "Rebuild the feature from scratch with new technology"] },
+  { id: "q7", text: "When conducting A/B tests, what determines the minimum sample size?", options: ["Number of engineers available", "Minimum detectable effect and statistical significance level", "How long the CEO is willing to wait", "The number of features being tested"] },
+  { id: "q8", text: "How should you define success for a new onboarding flow?", options: ["By counting total signups", "By measuring activation rate and time-to-value", "By the number of onboarding screens", "By surveying the design team"] },
+  { id: "q9", text: "What is the main benefit of using a jobs-to-be-done framework?", options: ["It replaces the need for user interviews", "It focuses on the underlying need rather than the solution", "It simplifies engineering estimates", "It eliminates the need for competitive analysis"] },
+  { id: "q10", text: "Your data team tells you the key metric you've been optimising is a vanity metric. What do you do?", options: ["Ignore them and continue optimising", "Work with the data team to identify a metric tied to real business outcomes", "Switch to tracking revenue only", "Stop measuring metrics altogether"] },
 ];
 
+const LETTERS = ["A", "B", "C", "D"] as const;
 const STORAGE_KEY_PREFIX = "pmgps_quiz_answers_";
 
 const QuizPage = () => {
@@ -46,18 +43,22 @@ const QuizPage = () => {
   const question = questions[currentIndex];
   const isLast = currentIndex === questions.length - 1;
   const currentAnswer = answers[question.id] || "";
+  const canProceed = currentAnswer.length > 0;
 
-  const isTextType = question.type === "scenario" || question.type === "open_text";
-  const canProceed = isTextType ? currentAnswer.length >= 50 : currentAnswer.length > 0;
-
-  // Auto-save answers
   useEffect(() => {
     localStorage.setItem(storageKey, JSON.stringify(answers));
   }, [answers, storageKey]);
 
   const setAnswer = useCallback(
-    (value: string) => {
-      setAnswers((prev) => ({ ...prev, [question.id]: value }));
+    (letter: string) => {
+      setAnswers((prev) => {
+        if (prev[question.id] === letter) {
+          const next = { ...prev };
+          delete next[question.id];
+          return next;
+        }
+        return { ...prev, [question.id]: letter };
+      });
     },
     [question.id]
   );
@@ -68,7 +69,6 @@ const QuizPage = () => {
       return;
     }
 
-    // Submit
     setSubmitting(true);
     setProcessingStep(1);
 
@@ -142,45 +142,65 @@ const QuizPage = () => {
         </div>
         <Progress value={((currentIndex + 1) / questions.length) * 100} className="h-2" />
 
+        {/* Dot indicators */}
+        <div className="mt-3 flex items-center justify-center gap-2">
+          {questions.map((q, i) => {
+            const isAnswered = !!answers[q.id];
+            const isCurrent = i === currentIndex;
+            return (
+              <div
+                key={q.id}
+                className={cn(
+                  "h-2.5 w-2.5 rounded-full transition-all",
+                  isCurrent
+                    ? "border-2 border-primary bg-background"
+                    : isAnswered
+                    ? "bg-primary"
+                    : "bg-muted-foreground/30"
+                )}
+              />
+            );
+          })}
+        </div>
+
         {/* Question */}
         <div className="mt-10">
           <p className="text-lg font-semibold text-foreground leading-relaxed">{question.text}</p>
         </div>
 
-        {/* Answer area */}
-        <div className="mt-8">
-          {question.type === "multiple_choice" && question.options ? (
-            <RadioGroup value={currentAnswer} onValueChange={setAnswer} className="space-y-3">
-              {question.options.map((opt, i) => (
-                <label
-                  key={i}
+        {/* MCQ Options */}
+        <div className="mt-8 space-y-3">
+          {question.options.map((opt, i) => {
+            const letter = LETTERS[i];
+            const isSelected = currentAnswer === letter;
+            return (
+              <button
+                key={letter}
+                type="button"
+                onClick={() => setAnswer(letter)}
+                className={cn(
+                  "flex w-full items-center gap-4 rounded-xl border p-4 min-h-[56px] text-left transition-all duration-150 ease-in-out",
+                  isSelected
+                    ? "bg-primary border-primary text-primary-foreground"
+                    : "bg-card border-border hover:bg-primary/5"
+                )}
+              >
+                <span
                   className={cn(
-                    "flex cursor-pointer items-center gap-3 rounded-lg border p-4 transition-all",
-                    currentAnswer === opt
-                      ? "border-primary bg-primary/5 ring-1 ring-primary"
-                      : "border-border hover:border-primary/40"
+                    "flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-sm font-semibold transition-all duration-150",
+                    isSelected
+                      ? "bg-primary-foreground/20 text-primary-foreground"
+                      : "bg-secondary text-foreground"
                   )}
                 >
-                  <RadioGroupItem value={opt} id={`opt-${i}`} />
-                  <Label htmlFor={`opt-${i}`} className="cursor-pointer text-sm text-foreground">
-                    {opt}
-                  </Label>
-                </label>
-              ))}
-            </RadioGroup>
-          ) : (
-            <div>
-              <Textarea
-                value={currentAnswer}
-                onChange={(e) => setAnswer(e.target.value)}
-                placeholder="Walk me through your thinking. No need for frameworks — just reason out loud."
-                className="min-h-[160px]"
-              />
-              <p className={cn("mt-2 text-xs", currentAnswer.length < 50 ? "text-muted-foreground" : "text-success")}>
-                {currentAnswer.length} / 50 minimum characters
-              </p>
-            </div>
-          )}
+                  {letter}
+                </span>
+                <span className={cn("text-sm", isSelected ? "text-primary-foreground" : "text-foreground")}>
+                  {opt}
+                </span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Navigation */}
